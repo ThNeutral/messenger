@@ -21,9 +21,9 @@ builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<ProfilePictureService>();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("localhost_cors", policy =>
+    options.AddPolicy(name: "localhost_cors", policy =>
     {
-        policy.WithOrigins("http://localhost");
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
 

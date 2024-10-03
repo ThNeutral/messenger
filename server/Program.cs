@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+app.UseCors("localhost_cors");
 app.UseRouting();
 app.UseEndpoints(endpoints => endpoints.MapControllers());
-app.UseCors("localhost_cors");
 app.Run();

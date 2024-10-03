@@ -19,9 +19,16 @@ builder.WebHost.UseUrls("http://localhost:3000");
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<ProfilePictureService>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("localhost_cors", policy =>
+    {
+        policy.WithOrigins("http://localhost");
+    });
+});
 
 var app = builder.Build();
 app.UseRouting();
 app.UseEndpoints(endpoints => endpoints.MapControllers());
-
+app.UseCors("localhost_cors");
 app.Run();

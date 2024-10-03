@@ -109,7 +109,13 @@ namespace server.Controllers
                 errorResponse.errorMessage = "Failed to find user with given username and password";
                 return NotFound(errorResponse);
             }
-            return Ok(user);
+            var (token, errorToken) = await _tokenService.GetTokenOfAUser(user);
+            if (errorToken != ErrorCodes.NO_ERROR)
+            {
+                errorResponse.errorMessage = "Failed to connect to database";
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+            }
+            return Ok(new SuccessfulLoginResponse { expiresAt = token.ExpiresAt, token = token.JWToken }) ;
         }
         public class LoginByEmailModel()
         {
@@ -139,7 +145,13 @@ namespace server.Controllers
                 errorResponse.errorMessage = "Failed to find user with given email and password";
                 return NotFound(errorResponse);
             }
-            return Ok(user);
+            var (token, errorToken) = await _tokenService.GetTokenOfAUser(user);
+            if (errorToken != ErrorCodes.NO_ERROR)
+            {
+                errorResponse.errorMessage = "Failed to connect to database";
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+            }
+            return Ok(new SuccessfulLoginResponse { expiresAt = token.ExpiresAt, token = token.JWToken });
         }
         public class ChangeProfilePictureModel()
         {

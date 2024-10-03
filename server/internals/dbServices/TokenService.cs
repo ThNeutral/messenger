@@ -1,4 +1,5 @@
-﻿using server.internals.dbMigrations;
+﻿using Microsoft.EntityFrameworkCore;
+using server.internals.dbMigrations;
 using server.internals.dbMigrations.tables;
 using server.internals.helpers;
 
@@ -17,6 +18,19 @@ namespace server.internals.dbServices
                 var token = new Token { User = user, JWToken = t, ExpiresAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + 3600L };
                 _dbContext.Tokens.Add(token);
                 await _dbContext.SaveChangesAsync();
+                return (token, ErrorCodes.NO_ERROR);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return (null, ErrorCodes.DB_TRANSACTION_FAILED);
+            }
+        }
+        public async Task<(Token token, ErrorCodes code)> GetTokenOfAUser(User user)
+        {
+            try
+            {
+                var token = await _dbContext.Tokens.SingleAsync(t => t.User.UserID == user.UserID);
                 return (token, ErrorCodes.NO_ERROR);
             }
             catch (Exception ex)

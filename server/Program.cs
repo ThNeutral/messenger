@@ -15,7 +15,7 @@ builder.Services.AddMvc()
     {
         options.SuppressModelStateInvalidFilter = true;
     });
-builder.WebHost.UseUrls("http://localhost:3000");
+builder.WebHost.UseUrls("http://localhost");
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<ProfilePictureService>();

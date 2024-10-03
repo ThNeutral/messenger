@@ -208,7 +208,7 @@ namespace server.Controllers
             }
             var (profilePicture, errorProfilePicture) = await _profilePictureService.GetProfilePictureOfUser(user);
             var infromation = new UserInformation { username = user.Username, email = user.Email};
-            if (errorUser != ErrorCodes.NO_ERROR || user == null)
+            if (errorProfilePicture != ErrorCodes.NO_ERROR || user == null)
             {
                 infromation.base64encodedimage = "";
             } else

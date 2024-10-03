@@ -2,12 +2,11 @@
 
 namespace server.internals.dbMigrations.tables
 {
-    public class Token
+    public class ProfilePicture
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserID { get; set; }
-        public string JWToken { get; set; }
-        public long ExpiresAt { get; set; }
+        public string Base64EncodedImage { get; set; }
         public User User { get; set; }
     }
 }

@@ -17,6 +17,8 @@ builder.Services.AddMvc()
     });
 builder.WebHost.UseUrls("http://localhost:3000");
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<ProfilePictureService>();
 
 var app = builder.Build();
 app.UseRouting();

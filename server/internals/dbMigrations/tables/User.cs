@@ -12,5 +12,6 @@ namespace server.internals.dbMigrations.tables
         public string Salt { get; set; }
         public int UserStatus { get; set; }
         public Token Token { get; set; }
+        public ProfilePicture ProfilePicture { get; set; }
     }
 }

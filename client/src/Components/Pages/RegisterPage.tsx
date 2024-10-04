@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 export const RegisterPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -8,7 +8,7 @@ export const RegisterPage = () => {
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
   const handlePasswordChange = (e : React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
   const handleEmailChange = (e : React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
-//   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -18,18 +18,22 @@ export const RegisterPage = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({username, email, password }),
+            body: JSON.stringify({"username": username, "email": email, "password": password }),
         });
 
         if (response.ok) {
             // navigate('/');
-            alert('successful')
+            setUsername('')
+            setPassword('')
+            setEmail('')
+            setErrors([])
+
+
         } else {
             const errorData = await response.json();
-            setErrors(errorData.message);
+            setErrors([errorData.message]);
         }
     } catch (error) {
-        console.log(error)
         setErrors(['An unexpected error occurred']);
     }
 };
@@ -38,29 +42,38 @@ export const RegisterPage = () => {
 
   return (
     <div className='sign-form'>
-      <div className={errors.length !== 0? 'sign-form-container error' : 'sign-form-container'}><p>Registration</p>
+      <div className={errors.length !== 0? 'sign-form-container error' : 'sign-form-container'}><p className='p-h1'>Registration</p>
+      {/* <div> */}
         <form onSubmit={handleSubmit}>
-        <p>Input your email</p>
+          <div className='input-container'> 
         <input
           type="text"
           placeholder="Email"
           value={email}
+          id='email'
           onChange={handleEmailChange}
         />
-        <p>Input your username</p>
+        <label htmlFor='email'>Input your email</label></div>
+       <div className='input-container'>
         <input
           type="text"
           placeholder="Username"
+          id='username'
           value={username}
           onChange={handleUsernameChange}
         />
-        <p>Input your password</p>
+        <label htmlFor='username'>Input your username</label></div>
+        
+        <div className='input-container'>
         <input
           type="password"
+          id='password'
           placeholder="Password"
           value={password}
           onChange={handlePasswordChange}
         />
+        <label htmlFor='password'>Input your password</label></div>
+        
          {errors.length > 0 && (
                 <ul className='error'>
                     {errors.map((err, index) => (

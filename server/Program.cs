@@ -3,6 +3,7 @@ using server.internals.dbMigrations;
 using server.internals.dbServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
 DotNetEnv.Env.Load("./.env");
 
 var builder = WebApplication.CreateSlimBuilder(args);

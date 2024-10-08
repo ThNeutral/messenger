@@ -52,6 +52,21 @@ body {
   font-weight: 600;
   margin: auto;
 }
+.sign-form-container ul {
+  width: 100%;
+  margin: 6px 0px;
+}
+.sign-form-container li {
+  color: #B62020;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  text-align: center;
+  margin: auto;
+}
+.sign-form-container .li-error {
+  list-style: none;
+}
 .sign-form form {
   margin: 0;
   width: 90%;

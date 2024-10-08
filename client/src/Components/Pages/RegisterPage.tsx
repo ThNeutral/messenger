@@ -10,6 +10,12 @@ export const RegisterPage = () => {
   const handleEmailChange = (e : React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
   const navigate = useNavigate();
 
+
+  const formSubmitValidation = (email: string, username: string, password: string) : string[] => {
+    if(email.length === 0 || username.length === 0 || password.length === 0) errors.push('Fill in the fields')
+    if(username.length < 5 ) errors.push('Username must be more than 5 characters long')
+    return errors
+  }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {

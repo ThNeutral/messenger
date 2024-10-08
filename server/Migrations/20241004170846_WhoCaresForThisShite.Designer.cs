@@ -11,8 +11,8 @@ using server.internals.dbMigrations;
 namespace server.Migrations
 {
     [DbContext(typeof(MessengerDBContext))]
-    [Migration("20241003092516_AddProfilePictureTable")]
-    partial class AddProfilePictureTable
+    [Migration("20241004170846_WhoCaresForThisShite")]
+    partial class WhoCaresForThisShite
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,73 @@ namespace server.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("server.internals.dbMigrations.tables.Chat", b =>
+                {
+                    b.Property<int>("ChatID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ChatID"));
+
+                    b.Property<string>("ChatName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("ChatID");
+
+                    b.ToTable("Chat");
+                });
+
+            modelBuilder.Entity("server.internals.dbMigrations.tables.ChatToUser", b =>
+                {
+                    b.Property<int>("ChatID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ChatID", "UserID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("ChatToUser");
+                });
+
+            modelBuilder.Entity("server.internals.dbMigrations.tables.Message", b =>
+                {
+                    b.Property<int>("MessageID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("MessageID"));
+
+                    b.Property<int>("ChatID")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsRedirect")
+                        .HasColumnType("boolean");
+
+                    b.Property<long>("SendTime")
+                        .HasColumnType("BigInt");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MessageID");
+
+                    b.HasIndex("ChatID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Message");
+                });
 
             modelBuilder.Entity("server.internals.dbMigrations.tables.ProfilePicture", b =>
                 {
@@ -36,7 +103,7 @@ namespace server.Migrations
 
                     b.HasKey("UserID");
 
-                    b.ToTable("ProfilePicture");
+                    b.ToTable("ProfilePictures");
                 });
 
             modelBuilder.Entity("server.internals.dbMigrations.tables.Token", b =>
@@ -92,7 +159,51 @@ namespace server.Migrations
 
                     b.HasKey("UserID");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("server.internals.dbMigrations.tables.ChatToUser", b =>
+                {
+                    b.HasOne("server.internals.dbMigrations.tables.Chat", "Chat")
+                        .WithMany("ChatsToUsers")
+                        .HasForeignKey("ChatID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("server.internals.dbMigrations.tables.User", "User")
+                        .WithMany("ChatsToUsers")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Chat");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("server.internals.dbMigrations.tables.Message", b =>
+                {
+                    b.HasOne("server.internals.dbMigrations.tables.Chat", "Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("server.internals.dbMigrations.tables.User", "User")
+                        .WithMany("Messages")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Chat");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("server.internals.dbMigrations.tables.ProfilePicture", b =>
@@ -117,8 +228,19 @@ namespace server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("server.internals.dbMigrations.tables.Chat", b =>
+                {
+                    b.Navigation("ChatsToUsers");
+
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("server.internals.dbMigrations.tables.User", b =>
                 {
+                    b.Navigation("ChatsToUsers");
+
+                    b.Navigation("Messages");
+
                     b.Navigation("ProfilePicture")
                         .IsRequired();
 

@@ -12,6 +12,9 @@ namespace server.internals.dbMigrations
         public DbSet<User> Users { get; set; }
         public DbSet<Token> Tokens { get; set; }
         public DbSet<ProfilePicture> ProfilePictures { get; set; }
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<ChatToUser> ChatToUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

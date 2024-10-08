@@ -1,4 +1,6 @@
-﻿namespace server.internals.helpers
+﻿using System.Security.Cryptography;
+
+namespace server.internals.helpers
 {
     public enum ErrorCodes
     {
@@ -9,5 +11,14 @@
     {
         ONLINE, 
         OFFLINE
+    }
+
+    public class CustomRandom
+    {
+        public static ulong GenerateRandomULong()
+        {
+            byte[] buffer = RandomNumberGenerator.GetBytes(8);
+            return BitConverter.ToUInt64(buffer, 0);
+        }
     }
 }

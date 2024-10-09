@@ -38,10 +38,6 @@ namespace server.internals.dbMigrations
                     .IsRequired()
                     .HasMaxLength(255);
 
-                entity.Property(e => e.UserStatus)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
                 entity.HasOne(e => e.Token)
                     .WithOne(t => t.User)
                     .HasForeignKey<Token>(t => t.UserID);

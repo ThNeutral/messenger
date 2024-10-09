@@ -11,11 +11,12 @@ namespace server.Controllers
     [Route("/")]
     public class ChatController : ControllerBase
     {
-        public UserService _userService;
-        public ChatService _chatService;
-        public ChatController(UserService userService, ChatService chatService) 
+        private readonly UserService _userService;
+        private readonly ChatService _chatService;
+        private readonly TokenService _tokenService;
+        public ChatController(UserService userService, ChatService chatService)
         {
-            _userService = userService;    
+            _userService = userService;
             _chatService = chatService;
         }
         public class CreateChatModel
@@ -39,27 +40,26 @@ namespace server.Controllers
                 return BadRequest(errorResponse);
             }
             var (user, errorUser) = await _userService.GetUserByToken(token);
-            if (errorUser != ErrorCodes.NO_ERROR)
+            if (errorUser == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
                 return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
             }
-            if (user == null)
+            if (errorUser == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
                 errorResponse.errorMessage = "Did not find user with such token";
                 return NotFound(errorResponse);
             }
             var (chat, errorCreateChat) = await _chatService.CreateChat(user, model.chat_name);
-            if (errorCreateChat != ErrorCodes.NO_ERROR)
+            if (errorCreateChat == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to create chat";
                 return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
             }
-            return CreatedAtAction(nameof(CreateChat), new { chat_id = chat.ChatID });
+            return CreatedAtAction(nameof(CreateChat), new { chat_id = chat.ChatID, chat_name = model.chat_name });
         }
         public class AddUsersToChatModel
         {
-            [StringLength(int.MaxValue, MinimumLength = 1)]
             public ulong chat_id;
             public ulong[] user_ids;
         }
@@ -78,19 +78,124 @@ namespace server.Controllers
                 errorResponse.errorMessage = "Incorrect request body. Expected non-empty fields 'user_ids' and 'chat_id'";
                 return BadRequest(errorResponse);
             }
-            var (users, errorGetUsers) = await _userService.GetUsersByIDs(model.user_ids);
-            if (errorGetUsers != ErrorCodes.NO_ERROR || users == null)
+            var (chat, errorChat) = await _chatService.GetChatByChatID(model.chat_id);
+            if (errorChat == ErrorCodes.DB_TRANSACTION_FAILED) 
             {
-                errorResponse.errorMessage = "Failed to get users with given ID";
+                errorResponse.errorMessage = "Failed to connect to database";
                 return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
             }
-            var errorAddUsers = await _chatService.AddUsersToExistingChat(model.chat_id, users);
-            if (errorAddUsers != ErrorCodes.NO_ERROR)
+            if (errorChat == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
-                errorResponse.errorMessage = "Failed to add users to given chat";
+                errorResponse.errorMessage = "Failed to find chat with given chat_id";
+                return NotFound(errorResponse);
+            }
+            var (userAdder, errorGetUserAdder) = await _userService.GetUserByToken(token);
+            if (errorGetUserAdder == ErrorCodes.DB_TRANSACTION_FAILED)
+            {
+                errorResponse.errorMessage = "Failed to connect to database";
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+            }
+            if (errorGetUserAdder == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
+            {
+                errorResponse.errorMessage = "Failed to find user with given token";
+                return NotFound(errorResponse);
+            }
+            bool doesInclude = false;
+            foreach (var ctu in chat.ChatsToUsers)
+            {
+                if (ctu.UserID == userAdder.UserID)
+                {
+                    doesInclude = true;
+                    break;
+                }
+            }
+            if (!doesInclude)
+            {
+                errorResponse.errorMessage = "User does not have rights to add users to given chat";
+                return StatusCode(StatusCodes.Status403Forbidden, errorResponse);
+            }
+            var (users, errorGetUsers) = await _userService.GetUsersByIDs(model.user_ids);
+            if (errorGetUsers == ErrorCodes.DB_TRANSACTION_FAILED)
+            {
+                errorResponse.errorMessage = "Failed to connect to database";
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+            }
+            if (errorGetUsers == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
+            {
+                errorResponse.errorMessage = "All of provided ids are incorrect";
+                return NotFound(errorResponse);
+            }
+            if (errorGetUsers == ErrorCodes.FAILED_TO_FIND_SOME_ENTRIES)
+            {
+                errorResponse.errorMessage = "Some of provided ids are incorrect";
+                return NotFound(errorResponse);
+            }
+            var errorAddUsers = await _chatService.AddUsersToExistingChat(chat, users);
+            if (errorAddUsers == ErrorCodes.DB_TRANSACTION_FAILED)
+            {
+                errorResponse.errorMessage = "Failed to connect to database";
                 return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
             }
             return Ok();
+        }
+        public class GetMembersOfChatModel
+        {
+            public ulong chat_id;
+        }
+        [HttpPost("get-members-of-chat")]
+        public async Task<IActionResult> GetMembersOfGivenChat([FromBody] GetMembersOfChatModel model)
+        {
+            var errorResponse = new ErrorResponse();
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            if (token.IsNullOrEmpty())
+            {
+                errorResponse.errorMessage = "'Authorization' header was not provided";
+                return Unauthorized(errorResponse);
+            }
+            if (!ModelState.IsValid)
+            {
+                errorResponse.errorMessage = "Incorrect request body. Expected non-empty field 'chat_id'";
+                return BadRequest(errorResponse);
+            }
+            var (chat, errorChat) = await _chatService.GetChatByChatID(model.chat_id);
+            if (errorChat == ErrorCodes.DB_TRANSACTION_FAILED)
+            {
+                errorResponse.errorMessage = "Failed to connect to database";
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+            }
+            if (errorChat == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
+            {
+                errorResponse.errorMessage = "Failed to find chat with given chat_id";
+                return NotFound(errorResponse);
+            }
+            var (userAdder, errorGetUserAdder) = await _userService.GetUserByToken(token);
+            if (errorGetUserAdder == ErrorCodes.DB_TRANSACTION_FAILED)
+            {
+                errorResponse.errorMessage = "Failed to connect to database";
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+            }
+            if (errorGetUserAdder == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
+            {
+                errorResponse.errorMessage = "Failed to find user with given token";
+                return NotFound(errorResponse);
+            }
+            var userIDs = new List<ulong>();
+            bool doesInclude = false;
+            foreach (var ctu in chat.ChatsToUsers)
+            {
+                userIDs.Add(ctu.UserID);
+                if (ctu.UserID == userAdder.UserID)
+                {
+                    doesInclude = true;
+                    break;
+                }
+            }
+            if (!doesInclude)
+            {
+                errorResponse.errorMessage = "User does not have rights to add users to given chat";
+                return StatusCode(StatusCodes.Status403Forbidden, errorResponse);
+            }
+            return Ok(new { user_ids = userIDs });
         }
     }
 }

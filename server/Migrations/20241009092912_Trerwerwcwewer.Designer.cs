@@ -11,8 +11,8 @@ using server.internals.dbMigrations;
 namespace server.Migrations
 {
     [DbContext(typeof(MessengerDBContext))]
-    [Migration("20241008173834_bibibibibib")]
-    partial class bibibibibib
+    [Migration("20241009092912_Trerwerwcwewer")]
+    partial class Trerwerwcwewer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -141,10 +141,6 @@ namespace server.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
-
-                    b.Property<int>("UserStatus")
-                        .HasMaxLength(50)
-                        .HasColumnType("integer");
 
                     b.Property<string>("Username")
                         .IsRequired()

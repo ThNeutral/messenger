@@ -1,6 +1,8 @@
-﻿using server.internals.dbMigrations;
+﻿using Microsoft.EntityFrameworkCore;
+using server.internals.dbMigrations;
 using server.internals.dbMigrations.tables;
 using server.internals.helpers;
+using System;
 
 namespace server.internals.dbServices
 {
@@ -36,9 +38,8 @@ namespace server.internals.dbServices
                 return (null, ErrorCodes.DB_TRANSACTION_FAILED);
             }
         }
-        public async Task<ErrorCodes> AddUsersToExistingChat(ulong chat_id, IEnumerable<User> users)
+        public async Task<ErrorCodes> AddUsersToExistingChat(Chat chat, IEnumerable<User> users)
         {
-            var chat = _dbContext.Chats.Single(c => c.ChatID == chat_id);
             var ctus = new List<ChatToUser>();
             foreach (var user in users)
             {
@@ -70,6 +71,23 @@ namespace server.internals.dbServices
                     .Select(ctu => ctu.User).ToList();
 
                 return (users, ErrorCodes.NO_ERROR);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return (null, ErrorCodes.DB_TRANSACTION_FAILED);
+            }
+        }
+        public async Task<(Chat, ErrorCodes)> GetChatByChatID(ulong chat_id)
+        {
+            try
+            {
+                var chat = await _dbContext.Chats.SingleOrDefaultAsync(c => c.ChatID == chat_id);
+                if (chat == null)
+                {
+                    return (null, ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY);
+                }
+                return (chat, ErrorCodes.NO_ERROR);
             }
             catch (Exception ex)
             {

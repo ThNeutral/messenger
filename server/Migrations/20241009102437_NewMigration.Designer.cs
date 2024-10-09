@@ -11,8 +11,8 @@ using server.internals.dbMigrations;
 namespace server.Migrations
 {
     [DbContext(typeof(MessengerDBContext))]
-    [Migration("20241009092912_Trerwerwcwewer")]
-    partial class Trerwerwcwewer
+    [Migration("20241009102437_NewMigration")]
+    partial class NewMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

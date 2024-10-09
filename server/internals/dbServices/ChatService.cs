@@ -36,16 +36,22 @@ namespace server.internals.dbServices
                 return (null, ErrorCodes.DB_TRANSACTION_FAILED);
             }
         }
-        public async Task<ErrorCodes> AddUserToExistingChat(Chat chat, User user)
+        public async Task<ErrorCodes> AddUsersToExistingChat(ulong chat_id, IEnumerable<User> users)
         {
-            var ChatToUser = new ChatToUser
+            var chat = _dbContext.Chats.Single(c => c.ChatID == chat_id);
+            var ctus = new List<ChatToUser>();
+            foreach (var user in users)
             {
-                User = user,
-                Chat = chat
-            };
+                var ChatToUser = new ChatToUser
+                {
+                    User = user,
+                    Chat = chat
+                };
+                ctus.Add(ChatToUser);
+            }
             try
             {
-                _dbContext.ChatToUsers.Add(ChatToUser);
+                _dbContext.ChatToUsers.AddRange(ctus);
                 await _dbContext.SaveChangesAsync();
                 return ErrorCodes.NO_ERROR;
             }

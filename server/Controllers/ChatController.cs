@@ -60,12 +60,12 @@ namespace server.Controllers
         public class AddUsersToChatModel
         {
             [StringLength(int.MaxValue, MinimumLength = 1)]
-            public string users;
+            public ulong chat_id;
+            public ulong[] user_ids;
         }
         [HttpPost("add-users-to-chat")]
         public async Task<IActionResult> AddUserToChat([FromBody] AddUsersToChatModel model)
         {
-            Console.WriteLine(model.users);
             var errorResponse = new ErrorResponse();
             var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             if (token.IsNullOrEmpty())
@@ -75,10 +75,22 @@ namespace server.Controllers
             }
             if (!ModelState.IsValid)
             {
-                errorResponse.errorMessage = "Incorrect request body. Expected non-empty field 'users'";
+                errorResponse.errorMessage = "Incorrect request body. Expected non-empty fields 'user_ids' and 'chat_id'";
                 return BadRequest(errorResponse);
             }
-            return Ok(model);
+            var (users, errorGetUsers) = await _userService.GetUsersByIDs(model.user_ids);
+            if (errorGetUsers != ErrorCodes.NO_ERROR || users == null)
+            {
+                errorResponse.errorMessage = "Failed to get users with given ID";
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+            }
+            var errorAddUsers = await _chatService.AddUsersToExistingChat(model.chat_id, users);
+            if (errorAddUsers != ErrorCodes.NO_ERROR)
+            {
+                errorResponse.errorMessage = "Failed to add users to given chat";
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+            }
+            return Ok();
         }
     }
 }

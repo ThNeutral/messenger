@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using server.internals.dbMigrations;
 using server.internals.dbMigrations.tables;
 using server.internals.helpers;
@@ -17,6 +18,18 @@ namespace server.internals.dbServices
                 await _dbContext.SaveChangesAsync();
                 return ErrorCodes.NO_ERROR;
             }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine(ex.ToString());
+                if (ex.InnerException != null && ex.InnerException is SqlException sqlEx && (sqlEx.Number == 2627 || sqlEx.Number == 2601)) 
+                {
+                    return ErrorCodes.UNIQUE_CONSTRAINT_VIOLATION;
+                } 
+                else
+                {
+                    return ErrorCodes.DB_TRANSACTION_FAILED;
+                }
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
@@ -27,12 +40,12 @@ namespace server.internals.dbServices
         {
             try
             {
-                var user = await _dbContext.Users.SingleAsync(u => u.Username.Equals(username));
+                var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username.Equals(username));
                 if (user != null && user.Password == BCrypt.Net.BCrypt.HashPassword(password, user.Salt)) 
                 {
                     return (user, ErrorCodes.NO_ERROR);                
                 }
-                return (null, ErrorCodes.NO_ERROR);
+                return (null, ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY);
             }
             catch (Exception ex)
             {
@@ -44,12 +57,12 @@ namespace server.internals.dbServices
         {
             try
             {
-                var user = await _dbContext.Users.SingleAsync(u => u.Email.Equals(email));
+                var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Email.Equals(email));
                 if (user != null && user.Password == BCrypt.Net.BCrypt.HashPassword(password, user.Salt))
                 {
                     return (user, ErrorCodes.NO_ERROR);
                 }
-                return (null, ErrorCodes.NO_ERROR);
+                return (null, ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY);
             }
             catch (Exception ex)
             {
@@ -62,7 +75,11 @@ namespace server.internals.dbServices
         {
             try
             {
-                var user = await _dbContext.Users.SingleAsync(u => u.Token.JWToken.Equals(token));
+                var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Token.JWToken.Equals(token));
+                if (user  == null)
+                {
+                    return (null, ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY);
+                }
                 return (user, ErrorCodes.NO_ERROR);
             }
             catch (Exception ex)
@@ -76,6 +93,14 @@ namespace server.internals.dbServices
             try
             {
                 var user = _dbContext.Users.Where(u => ids.Contains(u.UserID)).ToList();
+                if (user == null)
+                {
+                    return (null, ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY);
+                }
+                if (user.Count != ids.Length)
+                {
+                    return (null, ErrorCodes.FAILED_TO_FIND_SOME_ENTRIES);
+                }
                 return (user, ErrorCodes.NO_ERROR);
             }
             catch (Exception ex)

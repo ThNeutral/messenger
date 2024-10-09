@@ -14,7 +14,7 @@ namespace server.internals.dbServices
         {
             try
             {
-                var profilePicture = await _dbContext.ProfilePictures.SingleAsync(pp => pp.UserID == user.UserID);
+                var profilePicture = await _dbContext.ProfilePictures.SingleOrDefaultAsync(pp => pp.UserID == user.UserID);
 
                 if (profilePicture == null)
                 {
@@ -45,7 +45,11 @@ namespace server.internals.dbServices
         {
             try
             {
-                var profilePicture = await _dbContext.ProfilePictures.SingleAsync(pp => pp.UserID == user.UserID);
+                var profilePicture = await _dbContext.ProfilePictures.SingleOrDefaultAsync(pp => pp.UserID == user.UserID);
+                if (profilePicture == null)
+                {
+                    return (null, ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY);
+                }
                 return (profilePicture, ErrorCodes.NO_ERROR);
             }
             catch (Exception ex)

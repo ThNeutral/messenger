@@ -30,7 +30,11 @@ namespace server.internals.dbServices
         {
             try
             {
-                var token = await _dbContext.Tokens.SingleAsync(t => t.User.UserID == user.UserID);
+                var token = await _dbContext.Tokens.SingleOrDefaultAsync(t => t.User.UserID == user.UserID);
+                if (token == null)
+                {
+                    return (null, ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY);
+                }
                 return (token, ErrorCodes.NO_ERROR);
             }
             catch (Exception ex)

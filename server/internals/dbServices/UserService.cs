@@ -71,5 +71,18 @@ namespace server.internals.dbServices
                 return (null, ErrorCodes.DB_TRANSACTION_FAILED);
             }
         }
+        public async Task<(List<User> users, ErrorCodes code)> GetUsersByIDs(ulong[] ids)
+        {
+            try
+            {
+                var user = _dbContext.Users.Where(u => ids.Contains(u.UserID)).ToList();
+                return (user, ErrorCodes.NO_ERROR);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return (null, ErrorCodes.DB_TRANSACTION_FAILED);
+            }
+        }
     }
 }

@@ -1,35 +1,32 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace server.Migrations
 {
     /// <inheritdoc />
-    public partial class WhoCaresForThisShite : Migration
+    public partial class bibibibibib : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Chat",
+                name: "Chats",
                 columns: table => new
                 {
-                    ChatID = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ChatID = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
                     ChatName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Chat", x => x.ChatID);
+                    table.PrimaryKey("PK_Chats", x => x.ChatID);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
-                    UserID = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserID = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
                     Username = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Password = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
@@ -42,23 +39,23 @@ namespace server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ChatToUser",
+                name: "ChatToUsers",
                 columns: table => new
                 {
-                    UserID = table.Column<int>(type: "integer", nullable: false),
-                    ChatID = table.Column<int>(type: "integer", nullable: false)
+                    UserID = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    ChatID = table.Column<decimal>(type: "numeric(20,0)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChatToUser", x => new { x.ChatID, x.UserID });
+                    table.PrimaryKey("PK_ChatToUsers", x => new { x.ChatID, x.UserID });
                     table.ForeignKey(
-                        name: "FK_ChatToUser_Chat_ChatID",
+                        name: "FK_ChatToUsers_Chats_ChatID",
                         column: x => x.ChatID,
-                        principalTable: "Chat",
+                        principalTable: "Chats",
                         principalColumn: "ChatID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ChatToUser_Users_UserID",
+                        name: "FK_ChatToUsers_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
                         principalColumn: "UserID",
@@ -66,28 +63,27 @@ namespace server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Message",
+                name: "Messages",
                 columns: table => new
                 {
-                    MessageID = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MessageID = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
                     Content = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     SendTime = table.Column<long>(type: "BigInt", nullable: false),
                     IsRedirect = table.Column<bool>(type: "boolean", nullable: false),
-                    ChatID = table.Column<int>(type: "integer", nullable: false),
-                    UserID = table.Column<int>(type: "integer", nullable: false)
+                    ChatID = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    UserID = table.Column<decimal>(type: "numeric(20,0)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Message", x => x.MessageID);
+                    table.PrimaryKey("PK_Messages", x => x.MessageID);
                     table.ForeignKey(
-                        name: "FK_Message_Chat_ChatID",
+                        name: "FK_Messages_Chats_ChatID",
                         column: x => x.ChatID,
-                        principalTable: "Chat",
+                        principalTable: "Chats",
                         principalColumn: "ChatID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Message_Users_UserID",
+                        name: "FK_Messages_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
                         principalColumn: "UserID",
@@ -98,7 +94,7 @@ namespace server.Migrations
                 name: "ProfilePictures",
                 columns: table => new
                 {
-                    UserID = table.Column<int>(type: "integer", nullable: false),
+                    UserID = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
                     Base64EncodedImage = table.Column<string>(type: "Text", nullable: false)
                 },
                 constraints: table =>
@@ -116,7 +112,7 @@ namespace server.Migrations
                 name: "Tokens",
                 columns: table => new
                 {
-                    UserID = table.Column<int>(type: "integer", nullable: false),
+                    UserID = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
                     JWToken = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ExpiresAt = table.Column<long>(type: "BigInt", nullable: false)
                 },
@@ -131,19 +127,43 @@ namespace server.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "WatchedBy",
+                columns: table => new
+                {
+                    MessageID = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    UserID = table.Column<decimal>(type: "numeric(20,0)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WatchedBy", x => new { x.MessageID, x.UserID });
+                    table.ForeignKey(
+                        name: "FK_WatchedBy_Messages_MessageID",
+                        column: x => x.MessageID,
+                        principalTable: "Messages",
+                        principalColumn: "MessageID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WatchedBy_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_ChatToUser_UserID",
-                table: "ChatToUser",
+                name: "IX_ChatToUsers_UserID",
+                table: "ChatToUsers",
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Message_ChatID",
-                table: "Message",
+                name: "IX_Messages_ChatID",
+                table: "Messages",
                 column: "ChatID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Message_UserID",
-                table: "Message",
+                name: "IX_Messages_UserID",
+                table: "Messages",
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
@@ -157,16 +177,18 @@ namespace server.Migrations
                 table: "Users",
                 column: "Username",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WatchedBy_UserID",
+                table: "WatchedBy",
+                column: "UserID");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ChatToUser");
-
-            migrationBuilder.DropTable(
-                name: "Message");
+                name: "ChatToUsers");
 
             migrationBuilder.DropTable(
                 name: "ProfilePictures");
@@ -175,7 +197,13 @@ namespace server.Migrations
                 name: "Tokens");
 
             migrationBuilder.DropTable(
-                name: "Chat");
+                name: "WatchedBy");
+
+            migrationBuilder.DropTable(
+                name: "Messages");
+
+            migrationBuilder.DropTable(
+                name: "Chats");
 
             migrationBuilder.DropTable(
                 name: "Users");

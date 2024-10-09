@@ -52,6 +52,7 @@ namespace server.Controllers
                 return BadRequest(errorResponse);
             }
             var newUser = new User();
+            newUser.UserID = CustomRandom.GenerateRandomULong();
             newUser.UserStatus = (int)UserStatuses.ONLINE;
             newUser.Username = model.username; 
             newUser.Email = model.email;

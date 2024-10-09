@@ -23,11 +23,9 @@ namespace server.Migrations
 
             modelBuilder.Entity("server.internals.dbMigrations.tables.Chat", b =>
                 {
-                    b.Property<int>("ChatID")
+                    b.Property<decimal>("ChatID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ChatID"));
+                        .HasColumnType("numeric(20,0)");
 
                     b.Property<string>("ChatName")
                         .IsRequired()
@@ -36,34 +34,32 @@ namespace server.Migrations
 
                     b.HasKey("ChatID");
 
-                    b.ToTable("Chat");
+                    b.ToTable("Chats");
                 });
 
             modelBuilder.Entity("server.internals.dbMigrations.tables.ChatToUser", b =>
                 {
-                    b.Property<int>("ChatID")
-                        .HasColumnType("integer");
+                    b.Property<decimal>("ChatID")
+                        .HasColumnType("numeric(20,0)");
 
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
+                    b.Property<decimal>("UserID")
+                        .HasColumnType("numeric(20,0)");
 
                     b.HasKey("ChatID", "UserID");
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("ChatToUser");
+                    b.ToTable("ChatToUsers");
                 });
 
             modelBuilder.Entity("server.internals.dbMigrations.tables.Message", b =>
                 {
-                    b.Property<int>("MessageID")
+                    b.Property<decimal>("MessageID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("numeric(20,0)");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("MessageID"));
-
-                    b.Property<int>("ChatID")
-                        .HasColumnType("integer");
+                    b.Property<decimal>("ChatID")
+                        .HasColumnType("numeric(20,0)");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -76,8 +72,8 @@ namespace server.Migrations
                     b.Property<long>("SendTime")
                         .HasColumnType("BigInt");
 
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
+                    b.Property<decimal>("UserID")
+                        .HasColumnType("numeric(20,0)");
 
                     b.HasKey("MessageID");
 
@@ -85,14 +81,14 @@ namespace server.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Message");
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("server.internals.dbMigrations.tables.ProfilePicture", b =>
                 {
-                    b.Property<int>("UserID")
+                    b.Property<decimal>("UserID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("numeric(20,0)");
 
                     b.Property<string>("Base64EncodedImage")
                         .IsRequired()
@@ -105,9 +101,9 @@ namespace server.Migrations
 
             modelBuilder.Entity("server.internals.dbMigrations.tables.Token", b =>
                 {
-                    b.Property<int>("UserID")
+                    b.Property<decimal>("UserID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("numeric(20,0)");
 
                     b.Property<long>("ExpiresAt")
                         .HasColumnType("BigInt");
@@ -124,11 +120,9 @@ namespace server.Migrations
 
             modelBuilder.Entity("server.internals.dbMigrations.tables.User", b =>
                 {
-                    b.Property<int>("UserID")
+                    b.Property<decimal>("UserID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserID"));
+                        .HasColumnType("numeric(20,0)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -167,11 +161,11 @@ namespace server.Migrations
 
             modelBuilder.Entity("server.internals.dbMigrations.tables.WatchedBy", b =>
                 {
-                    b.Property<int>("MessageID")
-                        .HasColumnType("integer");
+                    b.Property<decimal>("MessageID")
+                        .HasColumnType("numeric(20,0)");
 
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
+                    b.Property<decimal>("UserID")
+                        .HasColumnType("numeric(20,0)");
 
                     b.HasKey("MessageID", "UserID");
 

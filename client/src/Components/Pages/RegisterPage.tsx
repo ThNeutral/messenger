@@ -31,11 +31,10 @@ export const RegisterPage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validate form
     const validationErrors = formSubmitValidation(email, username, password);
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
-      return; // Do not proceed with the form submission if validation fails
+      return; 
     }
 
     try {
@@ -48,16 +47,33 @@ export const RegisterPage = () => {
       });
 
       if (response.ok) {
-        setUsername('');
-        setPassword('');
-        setEmail('');
-        setErrors([]);
-        // navigate('/');
+        try {
+          const resp = await fetch('http://localhost:3000/login-username', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+          });
+
+          if(resp.ok) {
+            navigate('/chats')
+          }
+          setUsername('');
+          setPassword('');
+          setEmail('');
+          setErrors([]);
+          
+        }
+        
+        catch(err) {
+            console.log(err)
+        }
       } else {
         setErrors(['Username or email are already taken']);
       }
     } catch (error) {
-      setErrors(['An unexpected error occurred']);
+      setErrors([`${error}`]);
     }
   };
 

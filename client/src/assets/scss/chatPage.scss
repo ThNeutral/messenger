@@ -1,0 +1,56 @@
+.chats-main-container {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    width: 100%;
+    top:0;
+    left: 0;
+    .allChats {
+        width: 25%;
+        height: 100vh;
+        background-color: lighten(#161718, 20%);
+        color: white;
+        // position: relative;
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            margin: 5px 5px;
+            .menu-icon-span, .loupe-icon-span {
+                display: inline-flex; 
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+            }
+            .menu-icon-span svg, .loupe-icon-span svg {
+                width: 30px;
+                height: 30px; 
+            }
+            .loupe-icon-span {
+                position: absolute;
+                right: 0;
+                top: 2;
+                left: 22%;
+                z-index: 10; 
+                width: 20px;
+            }
+            input {
+                background-color: lighten(#161718, 10%);
+                border: 2px solid lighten(#161718, 20%) ;
+                border-radius: 15px;
+                font-size: larger;
+                color: #EBEFEC;
+                padding: 5px 10px;
+                width: 80%;
+                padding-right: 40px;
+                &:focus {
+                    &::placeholder {
+                        color: lighten(#161718, 40%);
+                    }
+                    border: 2px solid lighten(#161718, 20%) ;
+                    outline: none;
+                }
+            }
+        }
+        
+    }
+}

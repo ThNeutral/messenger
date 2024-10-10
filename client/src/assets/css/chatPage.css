@@ -1,0 +1,81 @@
+.chats-main-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+.chats-main-container .allChats {
+  width: 25%;
+  height: 100vh;
+  background-color: #474a4d;
+  color: white;
+}
+.chats-main-container .allChats .input-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin: 5px 5px;
+}
+.chats-main-container .allChats .input-wrapper .menu-icon-span, .chats-main-container .allChats .input-wrapper .loupe-icon-span {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  cursor: pointer;
+}
+.chats-main-container .allChats .input-wrapper .menu-icon-span svg, .chats-main-container .allChats .input-wrapper .loupe-icon-span svg {
+  width: 30px;
+  height: 30px;
+}
+.chats-main-container .allChats .input-wrapper .loupe-icon-span {
+  position: absolute;
+  right: 0;
+  top: 2;
+  left: 22%;
+  z-index: 10;
+  width: 20px;
+}
+.chats-main-container .allChats .input-wrapper input {
+  background-color: #2e3133;
+  border: 2px solid #474a4d;
+  border-radius: 15px;
+  font-size: larger;
+  color: #EBEFEC;
+  padding: 5px 10px;
+  width: 80%;
+  padding-right: 40px;
+}
+.chats-main-container .allChats .input-wrapper input:focus {
+  border: 2px solid #474a4d;
+  outline: none;
+}
+.chats-main-container .allChats .input-wrapper input:focus::-webkit-input-placeholder {
+  color: #787d82;
+}
+.chats-main-container .allChats .input-wrapper input:focus::-moz-placeholder {
+  color: #787d82;
+}
+.chats-main-container .allChats .input-wrapper input:focus:-ms-input-placeholder {
+  color: #787d82;
+}
+.chats-main-container .allChats .input-wrapper input:focus::-ms-input-placeholder {
+  color: #787d82;
+}
+.chats-main-container .allChats .input-wrapper input:focus::placeholder {
+  color: #787d82;
+}

@@ -187,7 +187,6 @@ namespace server.Controllers
                 if (ctu.UserID == userAdder.UserID)
                 {
                     doesInclude = true;
-                    break;
                 }
             }
             if (!doesInclude)

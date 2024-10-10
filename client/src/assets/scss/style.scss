@@ -48,7 +48,12 @@ body {
     form {
         margin: 0;
         width: 90%;
-        
+        .sign-in-btn-submit {
+            background-color: #3DA0D1;
+            &:hover {
+                box-shadow: 0px 0px 10px lighten(#3DA0D1, 10%);
+            }
+        }
         button {
             font-size: 20px;
             margin-top: 10px;
@@ -96,6 +101,12 @@ body {
                 font-size: 1.1rem;
                 transition: all 0.3s ease;
                 pointer-events: none;
+            }
+            .sign-in-input {
+                border: 3.5px solid #D72D77;
+                &:focus {
+                    border: 3px solid #3DA0D1;
+                }
             }
             input {
                 width: 100%;

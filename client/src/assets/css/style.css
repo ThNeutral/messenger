@@ -71,6 +71,13 @@ body {
   margin: 0;
   width: 90%;
 }
+.sign-form form .sign-in-btn-submit {
+  background-color: #3DA0D1;
+}
+.sign-form form .sign-in-btn-submit:hover {
+  -webkit-box-shadow: 0px 0px 10px #66b4db;
+          box-shadow: 0px 0px 10px #66b4db;
+}
 .sign-form form button {
   font-size: 20px;
   margin-top: 10px;
@@ -141,6 +148,12 @@ body {
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
   pointer-events: none;
+}
+.sign-form form .input-container .sign-in-input {
+  border: 3.5px solid #D72D77;
+}
+.sign-form form .input-container .sign-in-input:focus {
+  border: 3px solid #3DA0D1;
 }
 .sign-form form .input-container input {
   width: 100%;

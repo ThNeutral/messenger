@@ -19,7 +19,7 @@ namespace server.Controllers
             _userService = userService;
             _chatService = chatService;
         }
-        public class CreateChatModel
+        public struct CreateChatModel
         {
             [StringLength(int.MaxValue, MinimumLength = 1)]
             public string chat_name;
@@ -58,7 +58,7 @@ namespace server.Controllers
             }
             return CreatedAtAction(nameof(CreateChat), new { chat_id = chat.ChatID, chat_name = model.chat_name });
         }
-        public class AddUsersToChatModel
+        public struct AddUsersToChatModel
         {
             public ulong chat_id;
             public ulong[] user_ids;
@@ -138,7 +138,7 @@ namespace server.Controllers
             }
             return Ok();
         }
-        public class GetMembersOfChatModel
+        public struct GetMembersOfChatModel
         {
             public ulong chat_id;
         }
@@ -196,7 +196,7 @@ namespace server.Controllers
             }
             return Ok(new { user_ids = userIDs });
         }
-        public class DeleteUsersFromChatModel
+        public struct DeleteUsersFromChatModel
         {
             public ulong chat_id;
             public ulong[] user_ids;
@@ -277,7 +277,7 @@ namespace server.Controllers
             }
             return Ok();
         }
-        public class DeleteChatModel
+        public struct DeleteChatModel
         {
             public ulong chat_id;
         }

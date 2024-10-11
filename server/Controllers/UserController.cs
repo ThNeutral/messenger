@@ -16,16 +16,18 @@ namespace server.Controllers
         private readonly UserService _userService;
         private readonly TokenService _tokenService;
         private readonly ProfilePictureService _profilePictureService;
-        class SuccessfulLoginResponse() 
+        public struct SuccessfulLoginResponse() 
         {
             public string token { get; set; }
             public long expiresAt { get; set; }
         }
-        class PartiallySuccessfulLoginResponse() : SuccessfulLoginResponse
+        struct PartiallySuccessfulLoginResponse()
         {
+            public string token { get; set; }
+            public long expiresAt { get; set; }
             public string? errorMessage { get; set; }
         }
-        public class RegisterModel()
+        public struct RegisterModel()
         {
             [StringLength(int.MaxValue, MinimumLength = 1)]
             public string username { get; set; }
@@ -85,7 +87,7 @@ namespace server.Controllers
             }
             return CreatedAtAction(nameof(Register), new SuccessfulLoginResponse { expiresAt = token.ExpiresAt, token = token.JWToken });
         }
-        public class LoginByUsernameModel()
+        public struct LoginByUsernameModel()
         {
             [StringLength(int.MaxValue, MinimumLength = 1)]
             public string username { get; set; }
@@ -126,7 +128,7 @@ namespace server.Controllers
             }
             return Ok(new SuccessfulLoginResponse { expiresAt = token.ExpiresAt, token = token.JWToken }) ;
         }
-        public class LoginByEmailModel()
+        public struct LoginByEmailModel()
         {
             [StringLength(int.MaxValue, MinimumLength = 1)]
             public string email { get; set; }
@@ -167,7 +169,7 @@ namespace server.Controllers
             }
             return Ok(new SuccessfulLoginResponse { expiresAt = token.ExpiresAt, token = token.JWToken });
         }
-        public class ChangeProfilePictureModel()
+        public struct ChangeProfilePictureModel()
         {
             public string base64encodedimage { get; set; }
         }
@@ -205,7 +207,7 @@ namespace server.Controllers
             }
             return Ok();
         }
-        class UserInformation
+        public struct UserInformation
         {
             public string username;
             public string email;

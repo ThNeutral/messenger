@@ -1,7 +1,6 @@
 import React from 'react';
 // import { useNavigate } from 'react-router-dom'; 
 import '../../assets/css/chatPage.css';
-import loupeIcon from '../../assets/loupe.svg';
 import { MenuIcon } from '../Icons/MenuIcon';
 import { LoupeIcon } from '../Icons/LoupeIcon';
 export const ChatsMainPage = () => {

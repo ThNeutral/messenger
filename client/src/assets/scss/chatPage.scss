@@ -9,8 +9,7 @@
         width: 25%;
         height: 100vh;
         background-color: lighten(#161718, 20%);
-        color: white;
-        // position: relative;
+        color: #EBEFEC;
         .input-wrapper {
             display: flex;
             align-items: center;
@@ -30,7 +29,7 @@
                 right: 0;
                 top: 2;
                 left: 22%;
-                z-index: 10; 
+                z-index: 1; 
                 width: 20px;
             }
             input {
@@ -53,4 +52,26 @@
         }
         
     }
+}
+
+.menu-open {
+    position: absolute;
+    top: 0;
+    z-index: 3;
+    width: 15%;
+    left: -100%;
+    transition: left 0.3s ease-in-out;
+    &.show {
+        left: 0;
+    }
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); 
+    z-index: 2; 
+    display: block;
 }

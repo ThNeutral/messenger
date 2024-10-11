@@ -1,0 +1,28 @@
+.menu-main-container {
+    background-color: lighten(#161718, 10%);
+    height: 100vh;
+    width: 100%;
+    padding: 20px 30px;
+    h1 {
+        font-size: 1.8rem;
+        margin: auto;
+    }
+    .line-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding: 10px 10px;
+        cursor: pointer;
+        &:hover {
+            background-color: lighten(#161718, 20%);
+        }
+        span {
+            margin-left: 5%;
+            font-size: 1.2rem;
+        }
+        svg {
+            width: 30px;
+            height: 30px;
+        }
+    }
+}

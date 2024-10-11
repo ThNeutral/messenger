@@ -5,7 +5,6 @@ import { RegisterPage } from './Components/Pages/RegisterPage';
 import { SignInPage } from './Components/Pages/SignInPage';
 import { ChatsMainPage } from './Components/Pages/ChatsMainPage';
 function App() {
-
   return (
     <>
     <div>

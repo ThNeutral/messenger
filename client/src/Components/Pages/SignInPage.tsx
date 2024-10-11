@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export const SignInPage = () => {
@@ -13,53 +13,46 @@ export const SignInPage = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
        
-        try {
-            if(usernameOrEmail.length === 0 || password.length === 0) {
-                setErrors(['Fill in empty fields'])
-            }
-            else {
-                const resp = await fetch('http://localhost:3000/login-username', {
+      try {
+        if (usernameOrEmail.length === 0 || password.length === 0) {
+            setErrors(['Fill in empty fields']);
+        } else {
+            const resp = await fetch('http://localhost:3000/login-username', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: usernameOrEmail, password }),
+            });
+          
+            if (resp.ok) {
+                const data = await resp.json();
+                localStorage.setItem('authToken', data.token); 
+                navigate("/chats");
+                setUsernameOrEmail('');
+                setPassword('');
+                setErrors([]);
+            } else {
+                const resp = await fetch('http://localhost:3000/login-email', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ username: usernameOrEmail, password }),
-                  });
-        
-              if (resp.ok) {
-                  navigate("/chats");
-                  setUsernameOrEmail('');
-                  setPassword('');
-                  setErrors([]);
+                    body: JSON.stringify({ email: usernameOrEmail, password }),
+                });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    localStorage.setItem('authToken', data.token); 
+                    navigate("/chats");
+                    setUsernameOrEmail('');
+                    setPassword('');
+                    setErrors([]);
+                } else {
+                    setErrors(["User not found"]);
                 }
-              else {
-                  try {
-                      const resp = await fetch('http://localhost:3000/login-email', {
-                          method: 'POST',
-                          headers: {
-                            'Content-Type': 'application/json',
-                          },
-                          body: JSON.stringify({ email: usernameOrEmail, password }),
-                        });
-                        if (resp.ok) {
-                          navigate("/chats");
-                          setUsernameOrEmail('');
-                          setPassword('');
-                          setErrors([]);
-                        }
-                        else {
-                          setErrors(["User not found"])
-                        }
-                  }
-                  catch(err) {
-                      console.log(err);
-                      setErrors(["User not found"])
-                  }
-              }
             }
-            
         }
-       catch (error) {
+      } catch (error) {
         setErrors([`${error}`]);
       }
     };
@@ -108,4 +101,4 @@ export const SignInPage = () => {
         </div>
       </div>
     );
-}
+};

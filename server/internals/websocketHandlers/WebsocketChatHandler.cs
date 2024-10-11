@@ -87,6 +87,7 @@ namespace server.internals.websocketServices
 
         private static async Task BroadcastMessageToAnotherUsers(WSMessage msg, ConcurrentDictionary<WebSocket, bool> conns, WebSocket ws)
         {
+            var tasks = new List<Task>();
             var str = JsonSerializer.Serialize(msg);
             foreach (var conn in conns)
             {
@@ -94,8 +95,9 @@ namespace server.internals.websocketServices
                 {
                     continue;
                 }
-                await conn.Key.SendAsync(new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(str)), WebSocketMessageType.Text, true, CancellationToken.None);
+                tasks.Add(conn.Key.SendAsync(new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(str)), WebSocketMessageType.Text, true, CancellationToken.None));
             }
+            Parallel.ForEach(tasks, async task => await task);
         }
     }
 }

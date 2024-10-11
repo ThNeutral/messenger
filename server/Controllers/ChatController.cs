@@ -9,7 +9,7 @@ namespace server.Controllers
 {
     [ApiController]
     [Route("/")]
-    public class ChatController : ControllerBase
+    public class ChatController : AbstractController
     {
         private readonly UserService _userService;
         private readonly ChatService _chatService;
@@ -43,7 +43,7 @@ namespace server.Controllers
             if (errorUser == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorUser == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -54,7 +54,7 @@ namespace server.Controllers
             if (errorCreateChat == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to create chat";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             return CreatedAtAction(nameof(CreateChat), new { chat_id = chat.ChatID, chat_name = model.chat_name });
         }
@@ -82,7 +82,7 @@ namespace server.Controllers
             if (errorChat == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorChat == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -93,7 +93,7 @@ namespace server.Controllers
             if (errorGetUserAdder == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorGetUserAdder == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -118,7 +118,7 @@ namespace server.Controllers
             if (errorGetUsers == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorGetUsers == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -134,7 +134,7 @@ namespace server.Controllers
             if (errorAddUsers == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             return Ok();
         }
@@ -161,7 +161,7 @@ namespace server.Controllers
             if (errorChat == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorChat == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -172,7 +172,7 @@ namespace server.Controllers
             if (errorGetUserAdder == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorGetUserAdder == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -192,7 +192,7 @@ namespace server.Controllers
             if (!doesInclude)
             {
                 errorResponse.errorMessage = "User does not have rights to add users to given chat";
-                return StatusCode(StatusCodes.Status403Forbidden, errorResponse);
+                return InternalServerError(errorResponse);
             }
             return Ok(new { user_ids = userIDs });
         }
@@ -220,7 +220,7 @@ namespace server.Controllers
             if (errorChat == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorChat == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -231,7 +231,7 @@ namespace server.Controllers
             if (errorGetUserAdder == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorGetUserAdder == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -251,13 +251,13 @@ namespace server.Controllers
             if (!doesInclude)
             {
                 errorResponse.errorMessage = "User does not have rights to delete users from given chat";
-                return StatusCode(StatusCodes.Status403Forbidden, errorResponse);
+                return Forbidden(errorResponse);
             }
             var (usersToDelete, errorFindUsersToDelete) = await _userService.GetUsersByIDs(userIDs.ToArray());
             if (errorFindUsersToDelete == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorFindUsersToDelete == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -273,7 +273,7 @@ namespace server.Controllers
             if (errorDeleteUsers == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to delete users";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             return Ok();
         }
@@ -311,7 +311,7 @@ namespace server.Controllers
             if (errorGetUserAdder == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorGetUserAdder == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -329,13 +329,13 @@ namespace server.Controllers
             if (!doesInclude)
             {
                 errorResponse.errorMessage = "User does not have rights to delete users from given chat";
-                return StatusCode(StatusCodes.Status403Forbidden, errorResponse);
+                return Forbidden(errorResponse);
             }
             var errorDeleteChat = await _chatService.DeleteChat(chat);
             if (errorDeleteChat == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to delete chat";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             return Ok();
         }

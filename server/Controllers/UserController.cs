@@ -11,21 +11,23 @@ namespace server.Controllers
 {
     [ApiController]
     [Route("/")]
-    public class UserController : ControllerBase
+    public class UserController : AbstractController
     {
         private readonly UserService _userService;
         private readonly TokenService _tokenService;
         private readonly ProfilePictureService _profilePictureService;
-        class SuccessfulLoginResponse() 
+        public struct SuccessfulLoginResponse() 
         {
             public string token { get; set; }
             public long expiresAt { get; set; }
         }
-        class PartiallySuccessfulLoginResponse() : SuccessfulLoginResponse
+        struct PartiallySuccessfulLoginResponse()
         {
+            public string token { get; set; }
+            public long expiresAt { get; set; }
             public string? errorMessage { get; set; }
         }
-        public class RegisterModel()
+        public struct RegisterModel()
         {
             [StringLength(int.MaxValue, MinimumLength = 1)]
             public string username { get; set; }
@@ -61,7 +63,7 @@ namespace server.Controllers
             if (errorUser == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to write user data to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorUser == ErrorCodes.UNIQUE_CONSTRAINT_VIOLATION)
             {
@@ -71,7 +73,7 @@ namespace server.Controllers
             if (errorToken == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to generate token";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (!model.base64encodedimage.IsNullOrEmpty()) 
             {
@@ -85,7 +87,7 @@ namespace server.Controllers
             }
             return CreatedAtAction(nameof(Register), new SuccessfulLoginResponse { expiresAt = token.ExpiresAt, token = token.JWToken });
         }
-        public class LoginByUsernameModel()
+        public struct LoginByUsernameModel()
         {
             [StringLength(int.MaxValue, MinimumLength = 1)]
             public string username { get; set; }
@@ -106,7 +108,7 @@ namespace server.Controllers
             if (error == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (error == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY) 
             {
@@ -117,7 +119,7 @@ namespace server.Controllers
             if (errorToken == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorToken == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -126,7 +128,7 @@ namespace server.Controllers
             }
             return Ok(new SuccessfulLoginResponse { expiresAt = token.ExpiresAt, token = token.JWToken }) ;
         }
-        public class LoginByEmailModel()
+        public struct LoginByEmailModel()
         {
             [StringLength(int.MaxValue, MinimumLength = 1)]
             public string email { get; set; }
@@ -147,7 +149,7 @@ namespace server.Controllers
             if (error == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (error == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -158,7 +160,7 @@ namespace server.Controllers
             if (errorToken == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorToken == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -167,7 +169,7 @@ namespace server.Controllers
             }
             return Ok(new SuccessfulLoginResponse { expiresAt = token.ExpiresAt, token = token.JWToken });
         }
-        public class ChangeProfilePictureModel()
+        public struct ChangeProfilePictureModel()
         {
             public string base64encodedimage { get; set; }
         }
@@ -190,7 +192,7 @@ namespace server.Controllers
             if (errorUser == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorUser == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {
@@ -201,11 +203,11 @@ namespace server.Controllers
             if (errorImage == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to set profile picture";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             return Ok();
         }
-        class UserInformation
+        public struct UserInformation
         {
             public string username;
             public string email;
@@ -225,7 +227,7 @@ namespace server.Controllers
             if (errorUser == ErrorCodes.DB_TRANSACTION_FAILED)
             {
                 errorResponse.errorMessage = "Failed to connect to database";
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                return InternalServerError(errorResponse);
             }
             if (errorUser == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
             {

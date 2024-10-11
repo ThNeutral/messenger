@@ -95,5 +95,41 @@ namespace server.internals.dbServices
                 return (null, ErrorCodes.DB_TRANSACTION_FAILED);
             }
         }
+
+        public async Task<ErrorCodes> DeleteChat(Chat chat)
+        {
+            try
+            {
+                _dbContext.Chats.Remove(chat);
+                await _dbContext.SaveChangesAsync();
+                return ErrorCodes.NO_ERROR;
+            } 
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return ErrorCodes.DB_TRANSACTION_FAILED;
+            }
+        }
+
+        public async Task<ErrorCodes> DeleteUsersFromChat(Chat chat, User[] users)
+        {
+            try
+            {
+                var ids = new List<ulong>();
+                foreach (var user in users)
+                {
+                    ids.Add(user.UserID);
+                }
+                var toRemove = _dbContext.ChatToUsers.Where(ctu => ctu.ChatID == chat.ChatID && ids.Contains(ctu.UserID)).ToList();
+                _dbContext.ChatToUsers.RemoveRange(toRemove);
+                await _dbContext.SaveChangesAsync();
+                return ErrorCodes.NO_ERROR;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return ErrorCodes.DB_TRANSACTION_FAILED;
+            }
+        }
     }
 }

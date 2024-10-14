@@ -3,8 +3,22 @@ import '../../assets/css/menu.css'
 import { GroupIcon } from '../Icons/GroupIcon'
 import { ChatIcon } from '../Icons/ChatIcon'
 import { SettingsIcon } from '../Icons/Settings'
-export const Menu = () => {
+import { CreateChat } from './CreateChat'
+
+type MenuProps = {
+    isMenuOpenRef: boolean,
+    setIsMenuOpen: (v: boolean) => void;
+  }
+export const Menu = ({isMenuOpenRef, setIsMenuOpen} : MenuProps) => {
     const [username, setUsername] = useState<string>()
+    const [isCreateChatOpen, setIsCreateChatOpen] = useState(false);
+    const toggleCreateChat = () => {
+        setIsCreateChatOpen((prev) => !prev);
+        console.log(isCreateChatOpen)
+    }  
+    useEffect(() => {
+        if(!isMenuOpenRef) setIsCreateChatOpen(false);
+    }, [isMenuOpenRef])
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('authToken');
@@ -31,13 +45,13 @@ export const Menu = () => {
         fetchUserData();
     }, []);
   return (
-    <div className='menu-main-container'>
+    <><div className='menu-main-container'>
         <h1>{username}</h1>
         <div className='line-btn'>
             <GroupIcon color={'#EBEFEC'} hoveredColor = {"#EBEFEC"}/>
             <span>New group</span>
         </div>
-        <div className='line-btn'>
+        <div className='line-btn' onClick={toggleCreateChat}>
             <ChatIcon color={'#EBEFEC'} hoveredColor = {"#EBEFEC"}/>
             <span>New chat</span>
         </div>
@@ -46,6 +60,9 @@ export const Menu = () => {
             <span>Settings</span>
         </div>
     </div>
+    <div className={`create-chat ${isCreateChatOpen ? 'show': ''}`}><CreateChat setIsMenuOpen={setIsMenuOpen} /></div>
+    </>
+    
     
   )
 }

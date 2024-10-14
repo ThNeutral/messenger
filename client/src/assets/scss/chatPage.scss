@@ -5,6 +5,7 @@
     width: 100%;
     top:0;
     left: 0;
+    overflow: hidden;
     .allChats {
         width: 25%;
         height: 100vh;
@@ -14,7 +15,7 @@
             display: flex;
             align-items: center;
             margin: 5px 5px;
-            .menu-icon-span, .loupe-icon-span {
+             .menu-icon-span, .loupe-icon-span {
                 display: inline-flex; 
                 align-items: center;
                 justify-content: center;

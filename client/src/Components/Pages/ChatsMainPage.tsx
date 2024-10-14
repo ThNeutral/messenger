@@ -7,9 +7,8 @@ import { Chats } from '../../Interfaces/Chats';
 import { Menu } from '../Pop up/Menu';
 export const ChatsMainPage = () => {
   const [chats, setChats] = useState <Chats[]> ([]);
-  const [chatName, setChatName] = useState<string>('');
-  const [error, setError] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
 //   const navigate = useNavigate(); 
 
 //   const handleLogout = () => {
@@ -22,38 +21,13 @@ const toggleMenu = () => {
 const closeMenu = () => {
   setIsMenuOpen(!isMenuOpen); 
 };
-const handleCreateChat = async () => {
-  try {
-    const token = localStorage.getItem('authToken');
-    const response = await fetch('https://localhost:3000/create-chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ chat_name: chatName }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      setError(errorData.errorMessage || 'Failed to create chat');
-      return;
-    }
-
-    const newChat = await response.json();
-    setChats([...chats, newChat]); 
-    setChatName('');
-  } catch (err) {
-    setError('Failed to create chat');
-  }
-};
-
+ 
 
   return (
     <div className="chats-main-container">
       <div className='allChats'>
       <div className={`menu-open ${isMenuOpen ? 'show' : ''}`}>
-          <Menu />
+          <Menu isMenuOpenRef={isMenuOpen} setIsMenuOpen={setIsMenuOpen}/>
         </div>
         
         {isMenuOpen && <div className="overlay" onClick={closeMenu}></div>}

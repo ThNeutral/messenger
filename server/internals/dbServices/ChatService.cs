@@ -131,5 +131,19 @@ namespace server.internals.dbServices
                 return ErrorCodes.DB_TRANSACTION_FAILED;
             }
         }
+
+        public async Task<(IEnumerable<Chat>, ErrorCodes)> GetChatsOfUser(User user)
+        {
+            try
+            {
+                var chats = _dbContext.ChatToUsers.Where(ctu => ctu.UserID == user.UserID).Select(ctu => ctu.Chat).ToList();
+                return (chats, ErrorCodes.NO_ERROR);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return (null, ErrorCodes.DB_TRANSACTION_FAILED);
+            }
+        }
     }
 }

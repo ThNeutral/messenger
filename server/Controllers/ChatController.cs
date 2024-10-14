@@ -339,5 +339,54 @@ namespace server.Controllers
             }
             return Ok();
         }
+        struct ChatData
+        {
+            public string name;
+            public ulong id;
+        }
+        struct GetMyChatsResponse
+        {
+            public ChatData[] chats;
+        }
+
+        [HttpPost("get-my-chats")]
+        public async Task<IActionResult> GetMyChats()
+        {
+            var errorResponse = new ErrorResponse();
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            if (token.IsNullOrEmpty())
+            {
+                errorResponse.errorMessage = "'Authorization' header was not provided";
+                return Unauthorized(errorResponse);
+            }
+            if (!ModelState.IsValid)
+            {
+                errorResponse.errorMessage = "Incorrect request body. Expected non-empty fields 'chat_id' and 'user_ids'";
+                return BadRequest(errorResponse);
+            }
+            var (userAdder, errorGetUserAdder) = await _userService.GetUserByToken(token);
+            if (errorGetUserAdder == ErrorCodes.DB_TRANSACTION_FAILED)
+            {
+                errorResponse.errorMessage = "Failed to connect to database";
+                return InternalServerError(errorResponse);
+            }
+            if (errorGetUserAdder == ErrorCodes.FAILED_TO_FIND_GIVEN_ENTRY)
+            {
+                errorResponse.errorMessage = "Failed to find user with given token";
+                return NotFound(errorResponse);
+            }
+            var (chats, errorGetChats) = await _chatService.GetChatsOfUser(userAdder);
+            if (errorGetChats == ErrorCodes.DB_TRANSACTION_FAILED)
+            {
+                errorResponse.errorMessage = "Failed to connect to database";
+                return InternalServerError(errorResponse);
+            }
+            var chatDatas = new List<ChatData>();
+            foreach (var chat in chats) 
+            {
+                chatDatas.Add(new ChatData { id = chat.ChatID, name = chat.ChatName });
+            }
+            return Ok(new GetMyChatsResponse { chats = chatDatas.ToArray() });
+        }
     }
 }

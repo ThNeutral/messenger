@@ -1,4 +1,4 @@
-package main
+package hub
 
 import (
 	"log"
@@ -71,11 +71,11 @@ func (h *Hub) Run() {
 					log.Printf("Recieved request to broadcast data to non-existent chat %s\n", request.ChatID)
 					continue
 				}
-				var wg sync.WaitGroup
 				if _, ok := chat.Users[request.From]; !ok {
 					log.Printf("Tried to write message to a chat which user does not belong to. ChatID: %s\n", request.ChatID)
 					continue
 				}
+				var wg sync.WaitGroup
 				for user, _ := range chat.Users {
 					if user == request.From {
 						continue
@@ -83,7 +83,7 @@ func (h *Hub) Run() {
 					wg.Add(1)
 					go func(u *websocket.Conn) {
 						defer wg.Done()
-						user.WriteMessage(websocket.TextMessage, request.Message)
+						u.WriteMessage(websocket.TextMessage, request.Message)
 					}(user)
 					wg.Wait()
 				}

@@ -6,7 +6,18 @@
 </head>
 <body>
     <script>
-        let ws = new WebSocket("ws://localhost:3000/chat/12312")
+        let ws = new WebSocket("ws://localhost:3000/chat/12")
+        ws.addEventListener("message", (event) => {
+            console.log("Recieved data from server", event);
+        })
+        function sendData() {
+            ws.send("test")
+        }
+        function closeWS() {
+            ws.close(1001)
+        }
     </script>
+    <button onclick="sendData()">send data</button>
+    <button onclick="closeWS()">cloe ws</button>
 </body>
 </html>

@@ -37,12 +37,47 @@ func init() {
 }
 
 func main() {
-	godotenv.Load(".env")
-
-	db_url := os.Getenv("DB_URL")
-	if db_url == "" {
-		fmt.Println("Environment variable DB_URL is not found")
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Println("Failed to load env")
 	}
+
+	pg_user := os.Getenv("POSTGRES_USER")
+	shouldStop := false
+	if pg_user == "" {
+		fmt.Println("Environment variable POSTGRES_USER is not found")
+		shouldStop = true
+	}
+
+	pg_db := os.Getenv("POSTGRES_DB")
+	if pg_db == "" {
+		fmt.Println("Environment variable POSTGRES_DB is not found")
+		shouldStop = true
+	}
+
+	pg_password := os.Getenv("POSTGRES_PASSWORD")
+	if pg_password == "" {
+		fmt.Println("Environment variable POSTGRES_PASSWORD is not found")
+		shouldStop = true
+	}
+
+	pg_host := os.Getenv("POSTGRES_HOST")
+	if pg_host == "" {
+		fmt.Println("Environment variable POSTGRES_HOST is not found")
+		shouldStop = true
+	}
+
+	pg_port := os.Getenv("POSTGRES_PORT")
+	if pg_port == "" {
+		fmt.Println("Environment variable POSTGRES_PORT is not found")
+		shouldStop = true
+	}
+
+	if shouldStop {
+		return
+	}
+
+	db_url := fmt.Sprintf("host=%v port=%v database=%v user=%v password=%v sslmode=disable", pg_host, pg_port, pg_db, pg_user, pg_password)
 
 	ctx := context.Background()
 
@@ -90,8 +125,13 @@ func main() {
 
 	go h.Run()
 
-	fmt.Println("Listening on :3000")
-	http.ListenAndServe(":3000", r)
+	httpPort := os.Getenv("PORT")
+	if httpPort == "" {
+		httpPort = "3000"
+	}
+
+	fmt.Println("Listening on :" + httpPort)
+	http.ListenAndServe(":"+httpPort, r)
 }
 
 func serveTestFile(w http.ResponseWriter, r *http.Request) {

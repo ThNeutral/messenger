@@ -7,9 +7,9 @@ package database
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const getTokenOfUser = `-- name: GetTokenOfUser :one
@@ -27,14 +27,14 @@ const setTokenForUser = `-- name: SetTokenForUser :one
 INSERT INTO Tokens (user_id, token, expires_at) 
 VALUES ($1, $2, $3) 
 ON CONFLICT (user_id) 
-DO UPDATE SET token = $2 AND expires_at = $3
+DO UPDATE SET token = $2, expires_at = $3
 RETURNING user_id, token, expires_at
 `
 
 type SetTokenForUserParams struct {
 	UserID    uuid.UUID
 	Token     string
-	ExpiresAt pgtype.Timestamp
+	ExpiresAt time.Time
 }
 
 func (q *Queries) SetTokenForUser(ctx context.Context, arg SetTokenForUserParams) (Token, error) {

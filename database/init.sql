@@ -1,4 +1,3 @@
--- +goose Up
 CREATE TABLE Users (
     user_id UUID PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE,
@@ -51,13 +50,3 @@ CREATE TABLE WatchedBy (
     FOREIGN KEY (message_id) REFERENCES Messages(message_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
-
--- +goose Down
-
-DROP TABLE WatchedBy;
-DROP TABLE Messages;
-DROP TABLE ChatsToUsers;
-DROP TABLE Chats;
-DROP TABLE Tokens;
-DROP TABLE ProfilePictures;
-DROP TABLE Users;

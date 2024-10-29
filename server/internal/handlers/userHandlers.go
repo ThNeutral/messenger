@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/thneutral/messenger/server/internal/database"
@@ -44,8 +45,9 @@ func CreateUser(queries *database.Queries) func(w http.ResponseWriter, r *http.R
 			Base64EncodedImage: reqmodel.Base64EncodedImage,
 		})
 		newToken, err := queries.SetTokenForUser(r.Context(), database.SetTokenForUserParams{
-			UserID: newUser.UserID,
-			Token:  uuid.NewString(),
+			UserID:    newUser.UserID,
+			Token:     uuid.NewString(),
+			ExpiresAt: time.Now().Add(1 * time.Hour),
 		})
 		if err != nil {
 			writeError(w, "Failed to generate token", http.StatusInternalServerError)

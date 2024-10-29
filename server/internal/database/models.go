@@ -5,8 +5,9 @@
 package database
 
 import (
+	"time"
+
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Chat struct {
@@ -22,7 +23,7 @@ type Chatstouser struct {
 type Message struct {
 	MessageID uuid.UUID
 	Content   string
-	SendTime  pgtype.Timestamp
+	SendTime  time.Time
 	ChatID    uuid.UUID
 	UserID    uuid.UUID
 }
@@ -35,7 +36,7 @@ type Profilepicture struct {
 type Token struct {
 	UserID    uuid.UUID
 	Token     string
-	ExpiresAt pgtype.Timestamp
+	ExpiresAt time.Time
 }
 
 type User struct {

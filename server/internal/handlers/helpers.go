@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log"
 	"net/http"
 	"reflect"
 	"strings"
@@ -45,8 +46,9 @@ func AuthMiddleware(queries *database.Queries, handler func(queries *database.Qu
 func verifyModel[T any](w http.ResponseWriter, r *http.Request) (T, error) {
 	var payload T
 	data, _ := io.ReadAll(r.Body)
-	err := json.Unmarshal(data, payload)
+	err := json.Unmarshal(data, &payload)
 	if err != nil {
+		log.Println(err)
 		writeError(w, "Failed to unmarshal fileds", http.StatusBadRequest)
 		return payload, err
 	}

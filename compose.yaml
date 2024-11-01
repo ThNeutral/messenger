@@ -28,7 +28,15 @@ services:
       interval: 10s
       timeout: 50s
       retries: 5
-
+  client:
+      build: ./client
+      ports:
+        - "5173:5173"
+      environment:
+        - VITE_API_URL=http://localhost:3000
+      command: npm run dev
+      depends_on:
+        - server
 volumes:
   postgres_data:
     driver: local

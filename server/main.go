@@ -79,32 +79,32 @@ func main() {
 
 	db_url := fmt.Sprintf("host=%v port=%v database=%v user=%v password=%v sslmode=disable", pg_host, pg_port, pg_db, pg_user, pg_password)
 
-	ctx := context.Background()
+    ctx := context.Background()
 
-	conn, err := pgx.Connect(ctx, db_url)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	defer conn.Close(ctx)
+    conn, err := pgx.Connect(ctx, db_url)
+    if err != nil {
+        log.Println(err)
+        return
+    }
+    defer conn.Close(ctx)
 
-	queries := database.New(conn)
+    queries := database.New(conn)
 
-	r := chi.NewRouter()
+    r := chi.NewRouter()
 
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
+    r.Use(middleware.RequestID)
+    r.Use(middleware.RealIP)
+    r.Use(middleware.Logger)
+    r.Use(middleware.Recoverer)
 
-	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://*", "http://*"},
-		AllowedMethods:   []string{"*"},
-		AllowedHeaders:   []string{"*"},
-		ExposedHeaders:   []string{"*"},
-		AllowCredentials: false,
-		MaxAge:           300, // Maximum value not ignored by any of major browsers
-	}))
+    r.Use(cors.Handler(cors.Options{
+        AllowedOrigins:   []string{"http://localhost:5173"}, 
+        AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+        AllowedHeaders:   []string{"Content-Type", "Authorization"},
+        ExposedHeaders:   []string{"*"},
+        AllowCredentials: false,
+        MaxAge:           300,
+    }))
 
 	r.Post("/register", handlers.CreateUser(queries))
 	r.Post("/login-by-email", handlers.LoginByEmail(queries))

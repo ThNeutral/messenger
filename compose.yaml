@@ -37,6 +37,12 @@ services:
       command: npm run dev
       depends_on:
         - server
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - server
 volumes:
   postgres_data:
     driver: local

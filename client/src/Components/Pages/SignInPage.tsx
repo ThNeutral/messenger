@@ -17,12 +17,12 @@ export const SignInPage = () => {
         if (usernameOrEmail.length === 0 || password.length === 0) {
             setErrors(['Fill in empty fields']);
         } else {
-            const resp = await fetch('http://localhost:3000/login-username', {
+            const resp = await fetch('http://localhost:3000/login-by-username', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username: usernameOrEmail, password }),
+                body: JSON.stringify({ username: usernameOrEmail, password: password }),
             });
           
             if (resp.ok) {
@@ -33,12 +33,12 @@ export const SignInPage = () => {
                 setPassword('');
                 setErrors([]);
             } else {
-                const resp = await fetch('http://localhost:3000/login-email', {
+                const resp = await fetch('http://localhost:3000/login-by-email', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email: usernameOrEmail, password }),
+                    body: JSON.stringify({ email: usernameOrEmail, password: password }),
                 });
                 if (resp.ok) {
                     const data = await resp.json();

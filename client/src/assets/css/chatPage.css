@@ -104,3 +104,23 @@
   z-index: 2;
   display: block;
 }
+
+.chats-container {
+  width: 100%;
+  height: -webkit-max-content;
+  height: -moz-max-content;
+  height: max-content;
+  padding: auto;
+  background-color: #787d82;
+}
+.chats-container .chat-container {
+  height: 50px;
+  margin: 0;
+  width: 100%;
+  padding: 0;
+  color: #EBEFEC;
+}
+.chats-container .chat-container:hover {
+  background-color: #92979b;
+  cursor: pointer;
+}

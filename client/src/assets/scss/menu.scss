@@ -78,6 +78,22 @@
                 width: 100%;
                 display: flex;
                 justify-content: center;
+                &.error {
+                    label {
+                        color: lighten(#B62020, 20%);
+                    }
+                    input {
+                        transition: border-color 0.3s ease;                        
+                        &:focus {
+                            border: 3.5px solid lighten(#B62020, 10%);
+                            outline: none;
+                            &::placeholder {
+                                color: lighten(#161718, 60%);
+                                }
+                        }
+                    }
+                    
+                }
                 label {
                     position: absolute;
                     top: 50%;

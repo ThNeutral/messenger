@@ -349,7 +349,7 @@ namespace server.Controllers
             public ChatData[] chats;
         }
 
-        [HttpPost("get-my-chats")]
+        [HttpGet("get-my-chats")]
         public async Task<IActionResult> GetMyChats()
         {
             var errorResponse = new ErrorResponse();

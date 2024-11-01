@@ -1,6 +1,6 @@
 export type Chats = {
-    ChatID : number,
-    ChatName: string,
+    id: number,
+    name: string,
     
         // public string ChatName { get; set; }
         // public ICollection<ChatToUser> ChatsToUsers { get; set; }

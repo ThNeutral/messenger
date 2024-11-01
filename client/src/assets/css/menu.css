@@ -98,6 +98,32 @@
       -ms-flex-pack: center;
           justify-content: center;
 }
+.create-chat .create-chat-main-container .input-container.error label {
+  color: #e25a5a;
+}
+.create-chat .create-chat-main-container .input-container.error input {
+  -webkit-transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease;
+}
+.create-chat .create-chat-main-container .input-container.error input:focus {
+  border: 3.5px solid #da2f2f;
+  outline: none;
+}
+.create-chat .create-chat-main-container .input-container.error input:focus::-webkit-input-placeholder {
+  color: #adb0b3;
+}
+.create-chat .create-chat-main-container .input-container.error input:focus::-moz-placeholder {
+  color: #adb0b3;
+}
+.create-chat .create-chat-main-container .input-container.error input:focus:-ms-input-placeholder {
+  color: #adb0b3;
+}
+.create-chat .create-chat-main-container .input-container.error input:focus::-ms-input-placeholder {
+  color: #adb0b3;
+}
+.create-chat .create-chat-main-container .input-container.error input:focus::placeholder {
+  color: #adb0b3;
+}
 .create-chat .create-chat-main-container .input-container label {
   position: absolute;
   top: 50%;

@@ -58,7 +58,7 @@ func verifyModel[T any](w http.ResponseWriter, r *http.Request) (T, error) {
 	msg := "Failed to find field(s):"
 	for i := 0; i < val.NumField(); i++ {
 		fieldValue := val.Field(i)
-		if fieldValue.IsZero() {
+		if fieldValue.IsZero() && typ.Field(i).Tag.Get("optional") != "true" {
 			fieldName := typ.Field(i).Tag.Get("json")
 			msg += "\t" + fieldName
 			isError = true

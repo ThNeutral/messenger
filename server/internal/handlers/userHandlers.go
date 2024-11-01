@@ -15,7 +15,7 @@ func CreateUser(queries *database.Queries) func(w http.ResponseWriter, r *http.R
 			Username           string `json:"username"`
 			Email              string `json:"email"`
 			Password           string `json:"password"`
-			Base64EncodedImage string `json:"base64encodedimage"`
+			Base64EncodedImage string `json:"base64encodedimage" optional:"true"`
 		}
 		reqmodel, err := verifyModel[RequestModel](w, r)
 		if err != nil {
@@ -77,7 +77,7 @@ func LoginByUsername(queries *database.Queries) func(w http.ResponseWriter, r *h
 			writeError(w, "Failed to find user with that username", http.StatusNotFound)
 			return
 		}
-		err = bcrypt.CompareHashAndPassword([]byte(reqmodel.Password), []byte(user.Password))
+		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(reqmodel.Password))
 		if err != nil {
 			writeError(w, "Wrong password", http.StatusForbidden)
 			return
@@ -111,7 +111,7 @@ func LoginByEmail(queries *database.Queries) func(w http.ResponseWriter, r *http
 			writeError(w, "Failed to find user with that email", http.StatusNotFound)
 			return
 		}
-		err = bcrypt.CompareHashAndPassword([]byte(reqmodel.Password), []byte(user.Password))
+		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(reqmodel.Password))
 		if err != nil {
 			writeError(w, "Wrong password", http.StatusForbidden)
 			return
